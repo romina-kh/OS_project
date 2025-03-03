@@ -1,0 +1,52 @@
+
+--- Running Scenario 1 ---
+Number of Threads: 3
+Queue Size: 5
+Task 2 started with execution time: 7 sec and arrival time: 1 sec.
+executed in thread 139683117913664.
+
+Task 1 started with execution time: 2 sec and arrival time: 2 sec.
+executed in thread 139683126306368.
+
+Task 1 completed
+Task 0 started with execution time: 1 sec and arrival time: 5 sec.
+executed in thread 139683134699072.
+
+Task 0 completed
+Task 2 completed
+
+--- Simulation Report ---
+Total simulation time: 8.00446 seconds
+Total tasks executed: 0
+Total threads assigned: 0
+Number of unused threads: 0
+
+--- Running Scenario 2 ---
+Number of Threads: 5
+Queue Size: 5
+Task 1 started with execution time: 5 sec and arrival time: 1 sec.
+executed in thread 139683126306368.
+
+Task 0 started with execution time: 2 sec and arrival time: 2 sec.
+executed in thread 139683117913664.
+
+Task 0 completed
+Task 2 started with execution time: 2 sec and arrival time: 5 sec.
+executed in thread 139683134699072.
+
+Task 4 started with execution time: 5 sec and arrival time: 6 sec.
+executed in thread 139683101128256.
+
+Task 1 completed
+Task 2 completed
+Task 3 started with execution time: 3 sec and arrival time: 8 sec.
+executed in thread 139683109520960.
+
+Task 3 completed
+Task 4 completed
+
+--- Simulation Report ---
+Total simulation time: 11.0011 seconds
+Total tasks executed: 0
+Total threads assigned: 0
+Number of unused threads: 0
