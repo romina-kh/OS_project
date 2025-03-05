@@ -7,24 +7,24 @@
 
                Task 2: started with 
                        execution time --> 7 sec.
-                       arrival time --> 1 sec.
-                       Executing in thread (140262546331200).
+                       arrival time   --> 1 sec.
+                       Executing in thread (140346902173248).
                Task 1: started with 
                        execution time --> 2 sec.
-                       arrival time --> 2 sec.
-                       Executing in thread (140262554723904).
+                       arrival time   --> 2 sec.
+                       Executing in thread (140346910565952).
                Task 1: completed.
                Task 0: started with 
                        execution time --> 1 sec.
-                       arrival time --> 5 sec.
-                       Executing in thread (140262563116608).
+                       arrival time   --> 5 sec.
+                       Executing in thread (140346918958656).
                Task 0: completed.
                Task 2: completed.
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
                         <<<  Simulation Report  >>> 
 
-                   Total  simulation time   --> 8.00036 seconds
+                   Total  simulation time   --> 8.0006 seconds
                    Total  tasks executed    --> 3
                    Total  threads assigned  --> 3
                    Number of unused threads --> 0
@@ -37,29 +37,29 @@
 
                Task 1: started with 
                        execution time --> 5 sec.
-                       arrival time --> 1 sec.
-                       Executing in thread (140262529545792).
+                       arrival time   --> 1 sec.
+                       Executing in thread (140346902173248).
                Task 0: started with 
                        execution time --> 2 sec.
-                       arrival time --> 2 sec.
-                       Executing in thread (140262537938496).
+                       arrival time   --> 2 sec.
+                       Executing in thread (140346893780544).
                Task 0: completed.
                Task 2: started with 
                        execution time --> 2 sec.
-                       arrival time --> 5 sec.
-                       Executing in thread (140262554723904).
+                       arrival time   --> 5 sec.
+                       Executing in thread (140346885387840).
                Task 1: completed.
                Task 4: started with 
                        execution time --> 5 sec.
-                       arrival time --> 6 sec.
-                       Executing in thread (140262563116608).
+                       arrival time   --> 6 sec.
+                       Executing in thread (140346910565952).
                Task 2: completed.
                Task 3: started with 
                        execution time --> 3 sec.
-                       arrival time --> 8 sec.
-                       Executing in thread (140262546331200).
-               Task 4: completed.
+                       arrival time   --> 8 sec.
+                       Executing in thread (140346918958656).
                Task 3: completed.
+               Task 4: completed.
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
                         <<<  Simulation Report  >>> 
@@ -77,35 +77,36 @@
 
                Task 3: started with 
                        execution time --> 4 sec.
-                       arrival time --> 1 sec.
-                       Executing in thread (140262563116608).
-               Task 0: started with 
+                       arrival time   --> 1 sec.
+                       Executing in thread (140346910565952).
+              Task  0: started with 
                        execution time --> 4 sec.
-                       arrival time --> 1 sec.
-                       Executing in thread (140262554723904).
+                       arrival time   --> 1 sec.
+                       Executing in thread (140346918958656).
+               Task 1: started with 
+                       execution time --> 2 sec.
+                       arrival time   --> 2 sec.
+                       Executing in thread (140346893780544).
                Task 2: started with 
                        execution time --> 1 sec.
-                       arrival time --> 2 sec.
-               Task 1: started with                      
-                       execution time --> 2 sec.
-                       arrival time --> 2 sec.
-                       Executing in thread (140262537938496).
+                       arrival time   --> 2 sec.
+                       Executing in thread (140346885387840).
                Task 2: completed.
                Task 4: started with 
                        execution time --> 5 sec.
-                       arrival time --> 4 sec.
-                       Executing in thread (140262546331200).
+                       arrival time   --> 4 sec.
+                       Executing in thread (140346902173248).
                Task 1: completed.
                Task 3: completed.
+               Task 0: completed.
                Task 6: started with 
                        execution time --> 4 sec.
-                       arrival time --> 5 sec.
-                       Executing in thread (140262529545792).
-               Task 0: completed.
+                       arrival time   --> 5 sec.
+                       Executing in thread (140346868602432).
                Task 5: started with 
                        execution time --> 7 sec.
-                       arrival time --> 8 sec.
-                       Executing in thread (140262512760384).
+                       arrival time   --> 8 sec.
+                       Executing in thread (140346876995136).
                Task 4: completed.
                Task 6: completed.
                Task 5: completed.
@@ -113,7 +114,7 @@
 
                         <<<  Simulation Report  >>> 
 
-                   Total  simulation time   --> 15.0004 seconds
+                   Total  simulation time   --> 15.0005 seconds
                    Total  tasks executed    --> 7
                    Total  threads assigned  --> 7
                    Number of unused threads --> 0

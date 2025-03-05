@@ -12,7 +12,7 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct TaskArgs 
+struct TaskArgs
 {
     int taskId = -1;
     int arrivalTime = 0;
@@ -21,13 +21,13 @@ struct TaskArgs
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void exeTaskStatic(int taskId, int arrivalTime, int executionTime) 
+void exeTaskStatic(int taskId, int arrivalTime, int executionTime)
 {
     this_thread::sleep_for(chrono::seconds(arrivalTime));
 
     cout << "               Task " << taskId << ": started with " << "\n"
-    << "                       execution time --> " << executionTime << " sec.\n";
-    cout << "                       arrival time --> " << arrivalTime << " sec.\n";
+    << "                       execution time --> "   << executionTime << " sec.\n";
+    cout << "                       arrival time   --> " << arrivalTime << " sec.\n";
     cout << "                       Executing in thread (" << this_thread::get_id() << ").\n";
     this_thread::sleep_for(chrono::seconds(executionTime));
     cout << "               Task " << taskId << ": completed.\n";
@@ -35,7 +35,7 @@ void exeTaskStatic(int taskId, int arrivalTime, int executionTime)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class SimpleMutex 
+class SimpleMutex
 {
 
 private:
@@ -44,14 +44,14 @@ private:
 public:
     SimpleMutex() : locked(false) {}
 
-    void lock() 
+    void lock()
     {
-        while (locked.exchange(true, memory_order_acquire)) 
+        while (locked.exchange(true, memory_order_acquire))
         {
             this_thread::yield(); // its for busy waiting
         }
     }
-    void unlock() 
+    void unlock()
     {
         locked.store(false, memory_order_release);
     }
@@ -59,37 +59,50 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class TaskQueue 
+class TaskQueue
 {
 
 private:
-    queue<TaskArgs> tasks; 
+    queue<TaskArgs> tasks;
     SimpleMutex mtx;
     bool stop;
+    int MaxSize ;
 
 public:
-    TaskQueue() : stop(false) {}
+    TaskQueue(int qsize) : stop(false) , MaxSize(qsize){}
 
-    void pushTask(TaskArgs task) 
+    void pushTask(TaskArgs task)
     {
-        mtx.lock();
-        tasks.push(task);
-        mtx.unlock();
-    }
-
-    TaskArgs popTask() 
-    {
-        while (true) 
+        //mtx.lock();
+        //tasks.push(task);
+        //mtx.unlock();
+        while (true)
         {
             mtx.lock();
-            if (!tasks.empty()) 
+            if (tasks.size() < MaxSize)
+            {
+                tasks.push(task);
+                mtx.unlock();
+                break;
+            }
+            mtx.unlock();
+            this_thread::yield();
+        }
+    }
+
+    TaskArgs popTask()
+    {
+        while (true)
+        {
+            mtx.lock();
+            if (!tasks.empty())
             {
                 TaskArgs task = tasks.front();
                 tasks.pop();
                 mtx.unlock();
                 return task;
-            } 
-            else if (stop) 
+            }
+            else if (stop)
             {
                 mtx.unlock();
                 return TaskArgs(); // Return an empty task
@@ -99,7 +112,7 @@ public:
         }
     }
 
-    void shutdown() 
+    void shutdown()
     {
         mtx.lock();
         stop = true;
@@ -109,7 +122,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class ThreadPool 
+class ThreadPool
 {
 
 private:
@@ -121,19 +134,19 @@ private:
     chrono::steady_clock::time_point startTime;
 
 public:
-    ThreadPool(int numThreads): stop(false), totalTExe(0), totalThsign(0) 
+    ThreadPool(int numThreads , int qsize): stop(false), totalTExe(0), totalThsign(0), taskQueue(qsize)
     {
         startTime = chrono::steady_clock::now();
 
-        // Create workers 
-        for (int i = 0; i < numThreads; ++i) 
+        // Create workers
+        for (int i = 0; i < numThreads; ++i)
         {
-            workers.emplace_back([this]() 
+            workers.emplace_back([this]()
             {
-                while (!stop) 
+                while (!stop)
                 {
                     TaskArgs task = taskQueue.popTask();
-                    if (task.taskId != -1) 
+                    if (task.taskId != -1)
                     {
                         exeTaskStatic(task.taskId, task.arrivalTime, task.executionTime);
                         totalTExe.fetch_add(1, memory_order_relaxed);
@@ -143,38 +156,38 @@ public:
         }
     }
 
-    void addTask(TaskArgs task) 
+    void addTask(TaskArgs task)
     {
         totalThsign.fetch_add(1, memory_order_relaxed);
         taskQueue.pushTask(task);
     }
 
-    void wait_to_finish() 
+    void wait_to_finish()
     {
-        while (totalTExe.load(memory_order_relaxed) < totalThsign.load(memory_order_relaxed)) 
+        while (totalTExe.load(memory_order_relaxed) < totalThsign.load(memory_order_relaxed))
         {
-            this_thread::yield(); 
+            this_thread::yield();
         }
     }
 
-    void shutdown() 
+    void shutdown()
     {
         stop = true;
         taskQueue.shutdown();
-        for (auto& worker : workers) 
+        for (auto& worker : workers)
         {
-            if (worker.joinable()) 
+            if (worker.joinable())
             {
                 worker.join();
             }
         }
     }
 
-    void Report() 
+    void Report()
     {
         auto endTime = chrono::steady_clock::now();
         chrono::duration<double> simulation = endTime - startTime;
-	cout << "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << "\n" ;
+cout << "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << "\n" ;
         cout << "\n                        <<<  Simulation Report  >>> \n\n";
         cout << "                   Total  simulation time   --> " << simulation.count() << " seconds\n";
         cout << "                   Total  tasks executed    --> " << totalTExe.load(memory_order_relaxed) << "\n";
@@ -182,7 +195,7 @@ public:
         cout << "                   Number of unused threads --> " << (totalThsign.load(memory_order_relaxed) - totalTExe.load(memory_order_relaxed)) << "\n";
     }
 
-    ~ThreadPool() 
+    ~ThreadPool()
     {
         shutdown();
     }
@@ -191,10 +204,10 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void readInputFiles(const string& commandsF, const string& arrivalF, const string& exeF,vector<vector<int>>& senData,
-                                                          vector<vector<int>>& arrivalT, vector<vector<int>>& exeT) 
+                                                          vector<vector<int>>& arrivalT, vector<vector<int>>& exeT)
 {
     ifstream commands(commandsF);
-    if (!commands.is_open()) 
+    if (!commands.is_open())
     {
         cerr << "!!! Error opening commands file. !!!\n";
         exit(1);
@@ -206,7 +219,7 @@ void readInputFiles(const string& commandsF, const string& arrivalF, const strin
     arrivalT.resize(numSen);
     exeT.resize(numSen);
 
-    for (int scenario = 0; scenario < numSen; ++scenario) 
+    for (int scenario = 0; scenario < numSen; ++scenario)
     {
         int numThreads, queueSize;
         commands >> numThreads >> queueSize;
@@ -215,16 +228,16 @@ void readInputFiles(const string& commandsF, const string& arrivalF, const strin
     commands.close();
 
     ifstream arrivalFile(arrivalF);
-    if (!arrivalFile.is_open()) 
+    if (!arrivalFile.is_open())
     {
         cerr << "!!! Error opening arrival times file.!!!\n";
         exit(1);
     }
 
-    for (int scenario = 0; scenario < numSen; ++scenario) 
+    for (int scenario = 0; scenario < numSen; ++scenario)
     {
         arrivalT[scenario].clear();
-        for (int task = 0; task < senData[scenario][0]; ++task) 
+        for (int task = 0; task < senData[scenario][0]; ++task)
         {
             int arrivalTime;
             arrivalFile >> arrivalTime;
@@ -234,16 +247,16 @@ void readInputFiles(const string& commandsF, const string& arrivalF, const strin
     arrivalFile.close();
 
     ifstream executionFile(exeF);
-    if (!executionFile.is_open()) 
+    if (!executionFile.is_open())
     {
         cerr << "Error opening execution times file.\n";
         exit(1);
     }
-    for (int scenario = 0; scenario < numSen; ++scenario) 
+    for (int scenario = 0; scenario < numSen; ++scenario)
     {
         exeT[scenario].clear();
 
-        for (int task = 0; task < senData[scenario][0]; ++task) 
+        for (int task = 0; task < senData[scenario][0]; ++task)
         {
             int executionTime;
             executionFile >> executionTime;
@@ -255,8 +268,8 @@ void readInputFiles(const string& commandsF, const string& arrivalF, const strin
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void runSenario(int senIndex, const vector<vector<int>>& senData,const vector<vector<int>>& arrivalTimes, 
-                                                                 const vector<vector<int>>& executionTimes) 
+void runSenario(int senIndex, const vector<vector<int>>& senData,const vector<vector<int>>& arrivalTimes,
+                                                                 const vector<vector<int>>& executionTimes)
 
 {
     int numThreads = senData[senIndex][0];
@@ -267,9 +280,9 @@ void runSenario(int senIndex, const vector<vector<int>>& senData,const vector<ve
     cout << "                       Number of Threads --> " << numThreads << "\n";
     cout << "                       Queue Size --> " << qSize << "\n\n";
 
-    ThreadPool pool(numThreads);
+    ThreadPool pool(numThreads , qSize);
 
-    for (int i = 0; i < arrivalTimes[senIndex].size(); ++i) 
+    for (int i = 0; i < arrivalTimes[senIndex].size(); ++i)
     {
         int arriveT = arrivalTimes[senIndex][i];
         int exeT    = executionTimes[senIndex][i];
@@ -284,7 +297,7 @@ void runSenario(int senIndex, const vector<vector<int>>& senData,const vector<ve
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int main() 
+int main()
 {
     string commandF = "commands.txt";
     string arrivalF = "arrival_times.txt";
@@ -293,7 +306,7 @@ int main()
     vector<vector<int>> senarioD, arrTimes, exeTimes;
     readInputFiles(commandF, arrivalF, exeF, senarioD, arrTimes, exeTimes);
 
-    for (int i = 0; i < senarioD.size(); ++i) 
+    for (int i = 0; i < senarioD.size(); ++i)
     {
         runSenario(i, senarioD, arrTimes, exeTimes);
     }
